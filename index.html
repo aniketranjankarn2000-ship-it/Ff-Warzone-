@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>FF WARZONE TOURNAMENT</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Bharat Gamers League</title>
 
 <style>
 body{
@@ -12,209 +12,174 @@ body{
   color:white;
 }
 
-header{
-  padding:15px;
-  text-align:center;
-  font-size:22px;
-  font-weight:bold;
+.section{
+  background:#0f172a;
+  margin:20px;
+  padding:20px;
+  border-radius:14px;
   box-shadow:0 0 20px cyan;
 }
 
-.container{
-  padding:15px;
-}
-
-.card{
-  background:#0f172a;
-  padding:15px;
-  margin-bottom:15px;
-  border-radius:10px;
-  box-shadow:0 0 15px cyan;
-}
-
-input{
+input,button{
   width:100%;
-  padding:10px;
+  padding:12px;
   margin:8px 0;
+  border-radius:8px;
   border:none;
-  border-radius:6px;
 }
 
 button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:6px;
-  font-weight:bold;
   background:#22c55e;
   color:white;
+  font-weight:bold;
 }
 
-.admin{
+.adminbtn{
   background:#ef4444;
 }
+
 </style>
 </head>
 
 <body>
 
-<header>🔥 FF WARZONE TOURNAMENT</header>
+<h2 style="text-align:center">BHARAT GAMERS LEAGUE</h2>
 
-<div class="container">
-
-<div class="card">
-<h3>Countdown</h3>
-<p id="timer"></p>
-</div>
-
-<div class="card">
+<!-- REGISTER -->
+<div class="section">
 <h3>Player Register</h3>
-<input id="reg_uid" placeholder="Free Fire UID">
-<input id="reg_pass" type="password" placeholder="Password">
+<input type="text" id="regUid" placeholder="Free Fire UID">
+<input type="password" id="regPass" placeholder="Password">
 <button onclick="register()">Register</button>
 </div>
 
-<div class="card">
+<!-- LOGIN -->
+<div class="section">
 <h3>Player Login</h3>
-<input id="login_uid" placeholder="UID">
-<input id="login_pass" type="password" placeholder="Password">
+<input type="text" id="loginUid" placeholder="UID">
+<input type="password" id="loginPass" placeholder="Password">
 <button onclick="login()">Login</button>
 </div>
 
-<div class="card">
+<!-- ADMIN LOGIN -->
+<div class="section">
 <h3>Admin Login</h3>
-<input id="admin_id" placeholder="Admin ID">
-<input id="admin_pass" type="password" placeholder="Password">
-<button class="admin" onclick="adminLogin()">Admin Login</button>
+<input type="text" id="adminId" placeholder="Admin ID">
+<input type="password" id="adminPass" placeholder="Password">
+<button class="adminbtn" onclick="adminLogin()">Admin Login</button>
 </div>
 
-<div class="card">
+<!-- TOURNAMENT -->
+<div class="section">
 <h3>Join Tournament</h3>
+
 <p>Entry Fee: ₹50</p>
 <p>Per Kill: ₹10</p>
 <p>Winner Prize: ₹500</p>
 <p>UPI: aniket8764@ptaxis</p>
 
-<input type="file" id="payment">
-<button onclick="join()">Upload & Join</button>
+<input type="file" id="screenshot">
+<button onclick="joinTournament()">Upload & Join</button>
+
 </div>
 
-<div class="card">
+<!-- LEADERBOARD -->
+<div class="section">
 <h3>Leaderboard</h3>
-<ul id="leaderboard"></ul>
+<div id="leaderboard"></div>
 </div>
 
-<div class="card">
+<!-- ADMIN PANEL -->
+<div class="section">
 <h3>Admin Panel</h3>
-<ul id="requests"></ul>
-</div>
+
+<input type="text" id="matchName" placeholder="Match Name">
+<input type="number" id="entryFee" placeholder="Entry Fee">
+<input type="number" id="perKill" placeholder="Per Kill">
+<input type="number" id="winnerPrize" placeholder="Winner Prize">
+
+<button onclick="createTournament()">Create Tournament</button>
 
 </div>
 
-<script>
 
-// COUNTDOWN
-var countDate = new Date().getTime() + 86400000;
-setInterval(function(){
- var now = new Date().getTime();
- var gap = countDate - now;
- var h = Math.floor((gap%(1000*60*60*24))/(1000*60*60));
- var m = Math.floor((gap%(1000*60*60))/(1000*60));
- var s = Math.floor((gap%(1000*60))/1000);
- document.getElementById("timer").innerHTML = h+"h "+m+"m "+s+"s";
-},1000);
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const firebaseConfig = {  
+  apiKey: "AIzaSyB7rSLRGLtXVPpTTO2LNtKZ0E6Cw1R7JDQ",  
+  authDomain: "bharat-gamers-league-9a331.firebaseapp.com",  
+  projectId: "bharat-gamers-league-9a331",  
+  storageBucket: "bharat-gamers-league-9a331.firebasestorage.app",  
+  messagingSenderId: "297075265656",  
+  appId: "1:297075265656:web:fa21ccb0be2191c0879d8d"  
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 
 // REGISTER
-function register(){
- let uid=document.getElementById("reg_uid").value;
- let pass=document.getElementById("reg_pass").value;
- localStorage.setItem(uid,pass);
- alert("Registered");
+window.register = async function(){
+  const uid = document.getElementById("regUid").value;
+  const pass = document.getElementById("regPass").value;
+
+  await addDoc(collection(db,"players"),{uid,pass});
+  alert("Registered Successfully");
 }
 
 // LOGIN
-function login(){
- let uid=document.getElementById("login_uid").value;
- let pass=document.getElementById("login_pass").value;
- let saved=localStorage.getItem(uid);
-
- if(pass===saved){
-   localStorage.setItem("player",uid);
-   alert("Login success");
- }else{
-   alert("Wrong login");
- }
+window.login = async function(){
+  alert("Login system live Firebase se connect hoga next update me");
 }
 
 // ADMIN LOGIN
-function adminLogin(){
- let id=document.getElementById("admin_id").value;
- let pass=document.getElementById("admin_pass").value;
+window.adminLogin = function(){
+  const id=document.getElementById("adminId").value;
+  const pass=document.getElementById("adminPass").value;
 
- if(id==="Admin2009" && pass==="Aniket2009"){
-   localStorage.setItem("admin","yes");
-   alert("Admin Login Success");
-   loadRequests();
- }
- else alert("Wrong admin");
+  if(id==="Admin2009" && pass==="Aniket2009"){
+    alert("Admin Login Success");
+  }else{
+    alert("Wrong admin");
+  }
 }
+
+
+// CREATE TOURNAMENT
+window.createTournament = async function(){
+  const name=document.getElementById("matchName").value;
+  const fee=document.getElementById("entryFee").value;
+  const kill=document.getElementById("perKill").value;
+  const prize=document.getElementById("winnerPrize").value;
+
+  await addDoc(collection(db,"tournaments"),{name,fee,kill,prize});
+
+  alert("Tournament Live Ho Gaya 🔥");
+}
+
 
 // JOIN
-function join(){
- let player=localStorage.getItem("player");
- if(!player){ alert("Login first"); return; }
-
- let req=JSON.parse(localStorage.getItem("requests")||"[]");
- req.push(player);
- localStorage.setItem("requests",JSON.stringify(req));
- alert("Join request sent");
- loadRequests();
+window.joinTournament = async function(){
+  await addDoc(collection(db,"joins"),{status:"pending"});
+  alert("Joined Successfully");
 }
 
-// ADMIN APPROVE
-function loadRequests(){
- let admin=localStorage.getItem("admin");
- if(admin!=="yes") return;
 
- let list=document.getElementById("requests");
- list.innerHTML="";
-
- let req=JSON.parse(localStorage.getItem("requests")||"[]");
-
- req.forEach((p,i)=>{
-  let li=document.createElement("li");
-  li.innerHTML=p+" <button onclick='approve("+i+")'>Approve</button>";
-  list.appendChild(li);
- });
-}
-
-function approve(i){
- let req=JSON.parse(localStorage.getItem("requests"));
- let leaderboard=JSON.parse(localStorage.getItem("leaderboard")||"[]");
-
- leaderboard.push(req[i]);
- localStorage.setItem("leaderboard",JSON.stringify(leaderboard));
-
- req.splice(i,1);
- localStorage.setItem("requests",JSON.stringify(req));
-
- loadLeaderboard();
- loadRequests();
-}
-
-// LEADERBOARD
-function loadLeaderboard(){
- let lb=document.getElementById("leaderboard");
- lb.innerHTML="";
- let data=JSON.parse(localStorage.getItem("leaderboard")||"[]");
- data.forEach(p=>{
-  let li=document.createElement("li");
-  li.innerText=p;
-  lb.appendChild(li);
- });
+// LEADERBOARD LOAD
+async function loadLeaderboard(){
+  const querySnapshot = await getDocs(collection(db,"joins"));
+  let html="";
+  querySnapshot.forEach(doc=>{
+    html += "<p>Player Joined</p>";
+  });
+  document.getElementById("leaderboard").innerHTML=html;
 }
 
 loadLeaderboard();
+
 </script>
 
 </body>
