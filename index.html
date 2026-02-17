@@ -6,16 +6,17 @@
 
 <style>
 body{
-background:#000;
+background:black;
 color:white;
 font-family:Arial;
-text-align:center;
 margin:0;
+text-align:center;
 }
 
 h1{
 color:red;
 margin-top:20px;
+text-shadow:0 0 20px red;
 }
 
 .container{
@@ -25,9 +26,10 @@ padding:20px;
 .box{
 background:#111;
 padding:20px;
-border-radius:10px;
+border-radius:12px;
 margin:20px auto;
-max-width:400px;
+max-width:420px;
+box-shadow:0 0 20px rgba(255,0,0,0.2);
 }
 
 input{
@@ -40,28 +42,22 @@ border:none;
 
 button{
 padding:12px 20px;
+margin:10px;
 border:none;
 border-radius:8px;
 background:red;
 color:white;
-font-size:16px;
+font-weight:bold;
 cursor:pointer;
-margin-top:10px;
 }
 
-table{
-width:100%;
-margin-top:20px;
-border-collapse:collapse;
+button:hover{
+background:#ff2e2e;
 }
 
-th,td{
-padding:10px;
-border-bottom:1px solid #333;
+.hidden{
+display:none;
 }
-
-.approve{background:green;}
-.reject{background:red;}
 </style>
 </head>
 
@@ -71,27 +67,39 @@ border-bottom:1px solid #333;
 
 <div class="container">
 
-<!-- HOME -->
+<!-- HOME BUTTONS -->
 <div id="home">
-<button onclick="showPlayerLogin()">PLAYER LOGIN</button>
-<button onclick="showAdminLogin()">ADMIN LOGIN</button>
+<button onclick="showRegister()">PLAYER REGISTER</button>
+<button onclick="showLogin()">PLAYER LOGIN</button>
+<button onclick="showAdmin()">ADMIN LOGIN</button>
 </div>
 
-<!-- PLAYER LOGIN -->
-<div id="playerLogin" class="box" style="display:none">
+<!-- REGISTER -->
+<div id="register" class="box hidden">
+<h2>Create Player Account</h2>
+<input id="regUser" placeholder="Username">
+<input id="regPass" type="password" placeholder="Password">
+<button onclick="register()">Register</button>
+</div>
+
+<!-- LOGIN -->
+<div id="login" class="box hidden">
 <h2>Player Login</h2>
-<input type="text" id="playerUser" placeholder="Username">
-<input type="password" id="playerPass" placeholder="Password">
-<button onclick="playerLogin()">Login</button>
-
-<h3>Create Account</h3>
-<input type="text" id="newUser" placeholder="Username">
-<input type="password" id="newPass" placeholder="Password">
-<button onclick="registerPlayer()">Register</button>
+<input id="loginUser" placeholder="Username">
+<input id="loginPass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
 </div>
 
-<!-- JOIN TOURNAMENT -->
-<div id="joinBox" class="box" style="display:none">
+<!-- ADMIN LOGIN -->
+<div id="adminLogin" class="box hidden">
+<h2>Admin Login</h2>
+<input id="adminUser" placeholder="Admin ID">
+<input id="adminPass" type="password" placeholder="Password">
+<button onclick="adminLogin()">Login</button>
+</div>
+
+<!-- TOURNAMENT -->
+<div id="tournament" class="box hidden">
 <h2>Join Tournament</h2>
 
 <p>Entry Fee: ₹20</p>
@@ -99,34 +107,18 @@ border-bottom:1px solid #333;
 <p>Winner Prize: ₹100</p>
 <p>UPI: aniket8764@ptaxis</p>
 
-<input type="text" id="playerName" placeholder="Player Name">
-<input type="text" id="playerUID" placeholder="Free Fire UID">
-<input type="text" id="txn" placeholder="Transaction ID">
+<input id="playerName" placeholder="Player Name">
+<input id="playerUID" placeholder="Free Fire UID">
+<input id="txn" placeholder="Transaction ID">
+<input type="file">
 
-<button onclick="joinTournament()">Submit</button>
-</div>
-
-<!-- ADMIN LOGIN -->
-<div id="adminLogin" class="box" style="display:none">
-<h2>Admin Login</h2>
-<input type="text" id="adminUser" placeholder="Username">
-<input type="password" id="adminPass" placeholder="Password">
-<button onclick="adminLogin()">Login</button>
+<button onclick="join()">Submit</button>
 </div>
 
 <!-- ADMIN PANEL -->
-<div id="adminPanel" class="box" style="display:none">
+<div id="adminPanel" class="box hidden">
 <h2>Admin Panel</h2>
-
-<h3>Create Tournament</h3>
-<input type="number" id="entryFee" placeholder="Entry Fee">
-<input type="number" id="perKill" placeholder="Per Kill">
-<input type="number" id="prize" placeholder="Winner Prize">
-<input type="text" id="upi" placeholder="UPI ID">
-<button onclick="saveTournament()">Save</button>
-
-<h3>Players</h3>
-<table>
+<table border="1" width="100%" style="color:white;">
 <tr>
 <th>Name</th>
 <th>UID</th>
@@ -141,74 +133,73 @@ border-bottom:1px solid #333;
 
 <script>
 
-// navigation
-function showPlayerLogin(){
-home.style.display="none";
-playerLogin.style.display="block";
+function showRegister(){
+hideAll();
+document.getElementById("register").classList.remove("hidden");
 }
 
-function showAdminLogin(){
-home.style.display="none";
-adminLogin.style.display="block";
+function showLogin(){
+hideAll();
+document.getElementById("login").classList.remove("hidden");
 }
 
-// PLAYER REGISTER
-function registerPlayer(){
-localStorage.setItem(
-document.getElementById("newUser").value,
-document.getElementById("newPass").value
-);
+function showAdmin(){
+hideAll();
+document.getElementById("adminLogin").classList.remove("hidden");
+}
+
+function hideAll(){
+document.getElementById("home").classList.add("hidden");
+document.getElementById("register").classList.add("hidden");
+document.getElementById("login").classList.add("hidden");
+document.getElementById("adminLogin").classList.add("hidden");
+}
+
+function register(){
+let u=document.getElementById("regUser").value;
+let p=document.getElementById("regPass").value;
+
+localStorage.setItem("player_"+u,p);
 alert("Account created!");
 }
 
-// PLAYER LOGIN
-function playerLogin(){
-let u=document.getElementById("playerUser").value;
-let p=document.getElementById("playerPass").value;
+function login(){
+let u=document.getElementById("loginUser").value;
+let p=document.getElementById("loginPass").value;
 
-if(localStorage.getItem(u)==p){
-playerLogin.style.display="none";
-joinBox.style.display="block";
+if(localStorage.getItem("player_"+u)==p){
+hideAll();
+document.getElementById("tournament").classList.remove("hidden");
 }else{
 alert("Wrong login");
 }
 }
 
-// JOIN
-function joinTournament(){
-let players=JSON.parse(localStorage.getItem("players")||"[]");
-
-players.push({
-name:playerName.value,
-uid:playerUID.value,
-status:"Pending"
-});
-
-localStorage.setItem("players",JSON.stringify(players));
-alert("Joined! Wait for admin approval");
-}
-
-// ADMIN LOGIN
 function adminLogin(){
-if(adminUser.value=="admin" && adminPass.value=="1234"){
-adminLogin.style.display="none";
-adminPanel.style.display="block";
+let u=document.getElementById("adminUser").value;
+let p=document.getElementById("adminPass").value;
+
+if(u=="admin" && p=="1234"){
+hideAll();
+document.getElementById("adminPanel").classList.remove("hidden");
 loadPlayers();
 }else{
 alert("Wrong admin login");
 }
 }
 
-// SAVE TOURNAMENT
-function saveTournament(){
-localStorage.setItem("entry",entryFee.value);
-localStorage.setItem("kill",perKill.value);
-localStorage.setItem("prize",prize.value);
-localStorage.setItem("upi",upi.value);
-alert("Saved");
+function join(){
+let name=document.getElementById("playerName").value;
+let uid=document.getElementById("playerUID").value;
+
+let players=JSON.parse(localStorage.getItem("players")||"[]");
+
+players.push({name:name,uid:uid,status:"Pending"});
+
+localStorage.setItem("players",JSON.stringify(players));
+alert("Submitted! Wait for approval.");
 }
 
-// LOAD PLAYERS
 function loadPlayers(){
 let players=JSON.parse(localStorage.getItem("players")||"[]");
 let html="";
@@ -220,16 +211,15 @@ html+=`
 <td>${p.uid}</td>
 <td>${p.status}</td>
 <td>
-<button class="approve" onclick="approve(${i})">Approve</button>
-<button class="reject" onclick="reject(${i})">Reject</button>
+<button onclick="approve(${i})">Approve</button>
+<button onclick="reject(${i})">Reject</button>
 </td>
 </tr>`;
 });
 
-playerTable.innerHTML=html;
+document.getElementById("playerTable").innerHTML=html;
 }
 
-// APPROVE
 function approve(i){
 let players=JSON.parse(localStorage.getItem("players"));
 players[i].status="Approved";
@@ -237,7 +227,6 @@ localStorage.setItem("players",JSON.stringify(players));
 loadPlayers();
 }
 
-// REJECT
 function reject(i){
 let players=JSON.parse(localStorage.getItem("players"));
 players[i].status="Rejected";
