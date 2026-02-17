@@ -1,27 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Login</title>
+  <title>Admin Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body{
+      font-family: Arial;
+      background:#0f172a;
+      color:white;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+    .login-box{
+      background:#1e293b;
+      padding:25px;
+      border-radius:12px;
+      width:300px;
+      text-align:center;
+      box-shadow:0 0 10px rgba(0,0,0,0.4);
+    }
+    input{
+      width:100%;
+      padding:10px;
+      margin:10px 0;
+      border:none;
+      border-radius:6px;
+    }
+    button{
+      width:100%;
+      padding:10px;
+      background:#22c55e;
+      border:none;
+      color:white;
+      font-weight:bold;
+      border-radius:6px;
+      cursor:pointer;
+    }
+    button:hover{
+      background:#16a34a;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Admin Panel Login</h2>
-
-<input type="email" id="email" placeholder="Enter email"><br><br>
-<input type="password" id="password" placeholder="Enter password"><br><br>
-
-<button onclick="login()">Login</button>
+<div class="login-box">
+  <h2>Admin Login</h2>
+  <input type="text" id="adminId" placeholder="Enter Admin ID">
+  <input type="password" id="adminPass" placeholder="Enter Password">
+  <button onclick="login()">Login</button>
+</div>
 
 <script>
 function login(){
-  var email = document.getElementById("email").value;
-  var password = document.getElementById("password").value;
+  var id = document.getElementById("adminId").value;
+  var pass = document.getElementById("adminPass").value;
 
-  if(email === "aniketranjankarn567@gmail.com" && password === "Aniket@2009"){
-      localStorage.setItem("adminLoggedIn","true");
-      window.location.href = "admin.html";
-  }else{
-      alert("Wrong login");
+  if(id === "Admin2009" && pass === "Aniket2009"){
+    alert("Login Successful");
+    window.location.href = "admin.html"; 
+  } else {
+    alert("Wrong Admin ID or Password");
   }
 }
 </script>
