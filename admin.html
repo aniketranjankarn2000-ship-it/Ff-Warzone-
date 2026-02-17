@@ -35,7 +35,30 @@
 <body>
 
 <h2>Admin Panel</h2>
+<h2>Create Tournament</h2>
 
+<input type="text" id="matchName" placeholder="Match Name"><br><br>
+<input type="number" id="entryFee" placeholder="Entry Fee ₹"><br><br>
+<input type="number" id="perKill" placeholder="Per Kill ₹"><br><br>
+<input type="number" id="prize" placeholder="Winner Prize ₹"><br><br>
+<input type="datetime-local" id="matchTime"><br><br>
+
+<button onclick="createTournament()">Start Tournament</button>
+
+<script>
+function createTournament(){
+  const match = {
+    name: document.getElementById("matchName").value,
+    entry: document.getElementById("entryFee").value,
+    kill: document.getElementById("perKill").value,
+    prize: document.getElementById("prize").value,
+    time: document.getElementById("matchTime").value
+  };
+
+  localStorage.setItem("tournament", JSON.stringify(match));
+  alert("Tournament Created!");
+}
+</script>
 <table>
 <tr>
 <th>Name</th>
