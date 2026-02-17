@@ -6,57 +6,55 @@
 
 <style>
 body{
-background:black;
-color:white;
-font-family:Arial;
 margin:0;
+font-family:Arial;
+background:linear-gradient(180deg,#000,#0a0a0a,#000);
+color:white;
 text-align:center;
 }
 
 h1{
-color:red;
-margin-top:20px;
-text-shadow:0 0 20px red;
-}
-
-.container{
-padding:20px;
+color:#ff0033;
+text-shadow:0 0 10px red;
 }
 
 .box{
 background:#111;
+margin:20px auto;
 padding:20px;
 border-radius:12px;
-margin:20px auto;
+width:90%;
 max-width:420px;
-box-shadow:0 0 20px rgba(255,0,0,0.2);
+box-shadow:0 0 20px #ff0033;
 }
 
-input{
+input,button{
 width:90%;
-padding:12px;
+padding:10px;
 margin:8px;
 border-radius:8px;
 border:none;
 }
 
 button{
-padding:12px 20px;
-margin:10px;
-border:none;
-border-radius:8px;
-background:red;
+background:#ff0033;
 color:white;
 font-weight:bold;
 cursor:pointer;
 }
 
 button:hover{
-background:#ff2e2e;
+background:#ff1a4d;
 }
 
 .hidden{
 display:none;
+}
+
+.timer{
+font-size:20px;
+color:#00ffcc;
+margin-top:10px;
 }
 </style>
 </head>
@@ -65,173 +63,163 @@ display:none;
 
 <h1>FF WARZONE</h1>
 
-<div class="container">
-
-<!-- HOME BUTTONS -->
-<div id="home">
-<button onclick="showRegister()">PLAYER REGISTER</button>
-<button onclick="showLogin()">PLAYER LOGIN</button>
-<button onclick="showAdmin()">ADMIN LOGIN</button>
+<!-- HOME -->
+<div class="box" id="home">
+<h2>Welcome</h2>
+<button onclick="show('register')">Player Register</button>
+<button onclick="show('login')">Player Login</button>
+<button onclick="show('adminlogin')">Admin Login</button>
 </div>
 
-<!-- REGISTER -->
-<div id="register" class="box hidden">
-<h2>Create Player Account</h2>
-<input id="regUser" placeholder="Username">
-<input id="regPass" type="password" placeholder="Password">
+<!-- PLAYER REGISTER -->
+<div class="box hidden" id="register">
+<h2>Player Register</h2>
+<input id="reguser" placeholder="Username">
+<input id="regpass" placeholder="Password">
 <button onclick="register()">Register</button>
 </div>
 
-<!-- LOGIN -->
-<div id="login" class="box hidden">
+<!-- PLAYER LOGIN -->
+<div class="box hidden" id="login">
 <h2>Player Login</h2>
-<input id="loginUser" placeholder="Username">
-<input id="loginPass" type="password" placeholder="Password">
+<input id="user" placeholder="Username">
+<input id="pass" placeholder="Password">
 <button onclick="login()">Login</button>
 </div>
 
 <!-- ADMIN LOGIN -->
-<div id="adminLogin" class="box hidden">
+<div class="box hidden" id="adminlogin">
 <h2>Admin Login</h2>
-<input id="adminUser" placeholder="Admin ID">
-<input id="adminPass" type="password" placeholder="Password">
+<input id="adminuser" placeholder="Admin ID">
+<input id="adminpass" placeholder="Password">
 <button onclick="adminLogin()">Login</button>
 </div>
 
-<!-- TOURNAMENT -->
-<div id="tournament" class="box hidden">
+<!-- PLAYER DASHBOARD -->
+<div class="box hidden" id="playerdash">
 <h2>Join Tournament</h2>
 
-<p>Entry Fee: ₹20</p>
-<p>Per Kill: ₹0.5</p>
-<p>Winner Prize: ₹100</p>
-<p>UPI: aniket8764@ptaxis</p>
+<p>Entry Fee: ₹50</p>
+<p>Per Kill: ₹1</p>
+<p>Winner Prize: ₹500</p>
 
-<input id="playerName" placeholder="Player Name">
-<input id="playerUID" placeholder="Free Fire UID">
-<input id="txn" placeholder="Transaction ID">
-<input type="file">
+<p>UPI: <b>aniket8764@ptaxis</b></p>
 
-<button onclick="join()">Submit</button>
+<input type="file" id="payment">
+<button onclick="joinTournament()">Submit Payment & Join</button>
+
+<div class="timer" id="countdown"></div>
+
 </div>
 
 <!-- ADMIN PANEL -->
-<div id="adminPanel" class="box hidden">
+<div class="box hidden" id="adminpanel">
 <h2>Admin Panel</h2>
-<table border="1" width="100%" style="color:white;">
-<tr>
-<th>Name</th>
-<th>UID</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-<tbody id="playerTable"></tbody>
-</table>
-</div>
+
+<h3>Pending Players</h3>
+<div id="pending"></div>
+
+<h3>Approved Players</h3>
+<div id="approved"></div>
+
+<h3>Leaderboard</h3>
+<div id="leaderboard"></div>
 
 </div>
 
 <script>
 
-function showRegister(){
-hideAll();
-document.getElementById("register").classList.remove("hidden");
-}
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let pending = JSON.parse(localStorage.getItem("pending")) || [];
+let approved = JSON.parse(localStorage.getItem("approved")) || [];
 
-function showLogin(){
-hideAll();
-document.getElementById("login").classList.remove("hidden");
-}
-
-function showAdmin(){
-hideAll();
-document.getElementById("adminLogin").classList.remove("hidden");
-}
-
-function hideAll(){
-document.getElementById("home").classList.add("hidden");
-document.getElementById("register").classList.add("hidden");
-document.getElementById("login").classList.add("hidden");
-document.getElementById("adminLogin").classList.add("hidden");
+function show(id){
+document.querySelectorAll(".box").forEach(e=>e.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
 }
 
 function register(){
-let u=document.getElementById("regUser").value;
-let p=document.getElementById("regPass").value;
-
-localStorage.setItem("player_"+u,p);
-alert("Account created!");
+let u = reguser.value;
+let p = regpass.value;
+users.push({user:u,pass:p});
+localStorage.setItem("users",JSON.stringify(users));
+alert("Registered!");
+show("login");
 }
 
 function login(){
-let u=document.getElementById("loginUser").value;
-let p=document.getElementById("loginPass").value;
+let u=user.value;
+let p=pass.value;
 
-if(localStorage.getItem("player_"+u)==p){
-hideAll();
-document.getElementById("tournament").classList.remove("hidden");
-}else{
-alert("Wrong login");
-}
+let match = users.find(x=>x.user==u && x.pass==p);
+if(match){
+show("playerdash");
+startTimer();
+}else alert("Wrong ID");
 }
 
 function adminLogin(){
-let u=document.getElementById("adminUser").value;
-let p=document.getElementById("adminPass").value;
-
-if(u=="admin" && p=="1234"){
-hideAll();
-document.getElementById("adminPanel").classList.remove("hidden");
-loadPlayers();
-}else{
-alert("Wrong admin login");
-}
+if(adminuser.value=="admin" && adminpass.value=="1234"){
+show("adminpanel");
+loadAdmin();
+}else alert("Wrong admin");
 }
 
-function join(){
-let name=document.getElementById("playerName").value;
-let uid=document.getElementById("playerUID").value;
+function joinTournament(){
+let file = document.getElementById("payment").files[0];
+if(!file){ alert("Upload payment screenshot"); return;}
 
-let players=JSON.parse(localStorage.getItem("players")||"[]");
-
-players.push({name:name,uid:uid,status:"Pending"});
-
-localStorage.setItem("players",JSON.stringify(players));
-alert("Submitted! Wait for approval.");
+pending.push({name:user.value});
+localStorage.setItem("pending",JSON.stringify(pending));
+alert("Sent to admin approval");
 }
 
-function loadPlayers(){
-let players=JSON.parse(localStorage.getItem("players")||"[]");
-let html="";
-
-players.forEach((p,i)=>{
-html+=`
-<tr>
-<td>${p.name}</td>
-<td>${p.uid}</td>
-<td>${p.status}</td>
-<td>
+function loadAdmin(){
+let pHTML="";
+pending.forEach((p,i)=>{
+pHTML += `<p>${p.name}
 <button onclick="approve(${i})">Approve</button>
 <button onclick="reject(${i})">Reject</button>
-</td>
-</tr>`;
+</p>`;
 });
+document.getElementById("pending").innerHTML=pHTML;
 
-document.getElementById("playerTable").innerHTML=html;
+let aHTML="";
+approved.forEach(a=>{
+aHTML+=`<p>${a.name}</p>`;
+});
+document.getElementById("approved").innerHTML=aHTML;
+
+let lHTML="";
+approved.forEach(a=>{
+lHTML+=`<p>${a.name} - 0 kills</p>`;
+});
+document.getElementById("leaderboard").innerHTML=lHTML;
 }
 
 function approve(i){
-let players=JSON.parse(localStorage.getItem("players"));
-players[i].status="Approved";
-localStorage.setItem("players",JSON.stringify(players));
-loadPlayers();
+approved.push(pending[i]);
+pending.splice(i,1);
+localStorage.setItem("pending",JSON.stringify(pending));
+localStorage.setItem("approved",JSON.stringify(approved));
+loadAdmin();
 }
 
 function reject(i){
-let players=JSON.parse(localStorage.getItem("players"));
-players[i].status="Rejected";
-localStorage.setItem("players",JSON.stringify(players));
-loadPlayers();
+pending.splice(i,1);
+localStorage.setItem("pending",JSON.stringify(pending));
+loadAdmin();
+}
+
+function startTimer(){
+let end = new Date().getTime()+3600000;
+let x=setInterval(function(){
+let now=new Date().getTime();
+let dist=end-now;
+let m=Math.floor((dist%(1000*60*60))/(1000*60));
+let s=Math.floor((dist%(1000*60))/1000);
+document.getElementById("countdown").innerHTML="Match starts in "+m+"m "+s+"s";
+},1000);
 }
 
 </script>
