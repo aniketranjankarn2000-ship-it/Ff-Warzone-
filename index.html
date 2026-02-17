@@ -223,6 +223,24 @@ document.getElementById("countdown").innerHTML="Match starts in "+m+"m "+s+"s";
 }
 
 </script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCg1m5pAEUSUg9Vit1XC0TM3ThpUEW1YJw",
+    authDomain: "ff-warzone-ba902.firebaseapp.com",
+    projectId: "ff-warzone-ba902",
+    storageBucket: "ff-warzone-ba902.firebasestorage.app",
+    messagingSenderId: "1040052493533",
+    appId: "1:1040052493533:web:c9ebfd3cddb90249cb0f34"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
 </body>
 </html>
