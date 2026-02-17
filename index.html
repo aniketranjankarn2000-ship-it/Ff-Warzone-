@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>FF WARZONE</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-
 body{
-margin:0;
-background:linear-gradient(180deg,#000,#0b0b0b);
-font-family:Arial;
+background:#000;
 color:white;
+font-family:Arial;
 text-align:center;
+margin:0;
 }
 
-.logo{
-font-size:40px;
-color:#ff003c;
-text-shadow:0 0 25px red;
+h1{
+color:red;
 margin-top:20px;
 }
 
@@ -26,229 +22,228 @@ margin-top:20px;
 padding:20px;
 }
 
-button{
-padding:14px 25px;
-font-size:16px;
-background:#ff003c;
-border:none;
-color:white;
+.box{
+background:#111;
+padding:20px;
 border-radius:10px;
-margin:8px;
+margin:20px auto;
+max-width:400px;
 }
 
 input{
-display:block;
-margin:10px auto;
+width:90%;
 padding:12px;
-width:260px;
+margin:8px;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:12px 20px;
 border:none;
 border-radius:8px;
+background:red;
+color:white;
+font-size:16px;
+cursor:pointer;
+margin-top:10px;
 }
 
-.card{
-background:#111;
-padding:15px;
-margin:15px;
-border-radius:12px;
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
 }
 
-.upi{
-background:#222;
+th,td{
 padding:10px;
-border-radius:8px;
+border-bottom:1px solid #333;
 }
 
-.leader{
-background:#0f0f0f;
-padding:10px;
-margin:10px;
-border-radius:10px;
-}
-
+.approve{background:green;}
+.reject{background:red;}
 </style>
-
 </head>
 
 <body>
 
-<h1 class="logo">FF WARZONE</h1>
+<h1>FF WARZONE</h1>
 
-<h3 id="timer"></h3>
-<h3>Total Players: <span id="count">0</span></h3>
+<div class="container">
 
-<button onclick="showPlayer()">PLAYER PANEL</button>
-<button onclick="showAdmin()">ADMIN PANEL</button>
-<button onclick="leaderboard()">LEADERBOARD</button>
+<!-- HOME -->
+<div id="home">
+<button onclick="showPlayerLogin()">PLAYER LOGIN</button>
+<button onclick="showAdminLogin()">ADMIN LOGIN</button>
+</div>
 
-<div id="main" class="container"></div>
+<!-- PLAYER LOGIN -->
+<div id="playerLogin" class="box" style="display:none">
+<h2>Player Login</h2>
+<input type="text" id="playerUser" placeholder="Username">
+<input type="password" id="playerPass" placeholder="Password">
+<button onclick="playerLogin()">Login</button>
+
+<h3>Create Account</h3>
+<input type="text" id="newUser" placeholder="Username">
+<input type="password" id="newPass" placeholder="Password">
+<button onclick="registerPlayer()">Register</button>
+</div>
+
+<!-- JOIN TOURNAMENT -->
+<div id="joinBox" class="box" style="display:none">
+<h2>Join Tournament</h2>
+
+<p>Entry Fee: ₹20</p>
+<p>Per Kill: ₹0.5</p>
+<p>Winner Prize: ₹100</p>
+<p>UPI: aniket8764@ptaxis</p>
+
+<input type="text" id="playerName" placeholder="Player Name">
+<input type="text" id="playerUID" placeholder="Free Fire UID">
+<input type="text" id="txn" placeholder="Transaction ID">
+
+<button onclick="joinTournament()">Submit</button>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="adminLogin" class="box" style="display:none">
+<h2>Admin Login</h2>
+<input type="text" id="adminUser" placeholder="Username">
+<input type="password" id="adminPass" placeholder="Password">
+<button onclick="adminLogin()">Login</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="box" style="display:none">
+<h2>Admin Panel</h2>
+
+<h3>Create Tournament</h3>
+<input type="number" id="entryFee" placeholder="Entry Fee">
+<input type="number" id="perKill" placeholder="Per Kill">
+<input type="number" id="prize" placeholder="Winner Prize">
+<input type="text" id="upi" placeholder="UPI ID">
+<button onclick="saveTournament()">Save</button>
+
+<h3>Players</h3>
+<table>
+<tr>
+<th>Name</th>
+<th>UID</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+<tbody id="playerTable"></tbody>
+</table>
+</div>
+
+</div>
 
 <script>
 
-let upi="aniket8764@ptaxis";
-let entryFee=20;
-let perKill=0.5;
-let winnerPrize=100;
-
-function showPlayer(){
-document.getElementById("main").innerHTML=`
-
-<div class="card">
-<h2>Join Tournament</h2>
-
-<input id="name" placeholder="Player Name">
-<input id="uid" placeholder="Free Fire UID">
-
-<p>Entry Fee: ₹${entryFee}</p>
-<p>Per Kill: ₹${perKill}</p>
-<p>Winner Prize: ₹${winnerPrize}</p>
-
-<p class="upi">UPI: ${upi}</p>
-
-<input id="txn" placeholder="Transaction ID">
-<input type="file" id="shot">
-
-<button onclick="join()">SUBMIT</button>
-
-</div>
-
-`;
+// navigation
+function showPlayerLogin(){
+home.style.display="none";
+playerLogin.style.display="block";
 }
 
-function join(){
-
-let name=document.getElementById("name").value;
-let uid=document.getElementById("uid").value;
-let txn=document.getElementById("txn").value;
-
-if(name==""||uid==""||txn==""){
-alert("Fill all details");
-return;
+function showAdminLogin(){
+home.style.display="none";
+adminLogin.style.display="block";
 }
 
-let players=JSON.parse(localStorage.getItem("players"))||[];
+// PLAYER REGISTER
+function registerPlayer(){
+localStorage.setItem(
+document.getElementById("newUser").value,
+document.getElementById("newPass").value
+);
+alert("Account created!");
+}
+
+// PLAYER LOGIN
+function playerLogin(){
+let u=document.getElementById("playerUser").value;
+let p=document.getElementById("playerPass").value;
+
+if(localStorage.getItem(u)==p){
+playerLogin.style.display="none";
+joinBox.style.display="block";
+}else{
+alert("Wrong login");
+}
+}
+
+// JOIN
+function joinTournament(){
+let players=JSON.parse(localStorage.getItem("players")||"[]");
 
 players.push({
-name:name,
-uid:uid,
-txn:txn,
-kills:0,
-status:"Pending",
-room:"Not Assigned"
+name:playerName.value,
+uid:playerUID.value,
+status:"Pending"
 });
 
 localStorage.setItem("players",JSON.stringify(players));
-
-alert("Joined Successfully! Wait for Admin Approval");
-updateCount();
+alert("Joined! Wait for admin approval");
 }
 
-function showAdmin(){
-
-let pass=prompt("Enter Admin Password");
-
-if(pass!="admin123"){
-alert("Wrong Password");
-return;
+// ADMIN LOGIN
+function adminLogin(){
+if(adminUser.value=="admin" && adminPass.value=="1234"){
+adminLogin.style.display="none";
+adminPanel.style.display="block";
+loadPlayers();
+}else{
+alert("Wrong admin login");
+}
 }
 
-loadAdmin();
+// SAVE TOURNAMENT
+function saveTournament(){
+localStorage.setItem("entry",entryFee.value);
+localStorage.setItem("kill",perKill.value);
+localStorage.setItem("prize",prize.value);
+localStorage.setItem("upi",upi.value);
+alert("Saved");
 }
 
-function loadAdmin(){
-
-let players=JSON.parse(localStorage.getItem("players"))||[];
-
-let html="<h2>Admin Panel</h2>";
+// LOAD PLAYERS
+function loadPlayers(){
+let players=JSON.parse(localStorage.getItem("players")||"[]");
+let html="";
 
 players.forEach((p,i)=>{
-
 html+=`
-<div class="card">
-${p.name} | UID: ${p.uid}<br>
-TXN: ${p.txn}<br>
-Kills: ${p.kills}<br>
-Status: ${p.status}<br>
-Room: ${p.room}<br><br>
-
-<button onclick="approve(${i})">Approve</button>
-<button onclick="reject(${i})">Reject</button>
-<button onclick="addKill(${i})">Add Kill</button>
-<button onclick="declareWinner(${i})">Winner</button>
-</div>
-`;
+<tr>
+<td>${p.name}</td>
+<td>${p.uid}</td>
+<td>${p.status}</td>
+<td>
+<button class="approve" onclick="approve(${i})">Approve</button>
+<button class="reject" onclick="reject(${i})">Reject</button>
+</td>
+</tr>`;
 });
 
-document.getElementById("main").innerHTML=html;
+playerTable.innerHTML=html;
 }
 
+// APPROVE
 function approve(i){
 let players=JSON.parse(localStorage.getItem("players"));
-let room="ROOM"+Math.floor(Math.random()*9999);
 players[i].status="Approved";
-players[i].room=room;
 localStorage.setItem("players",JSON.stringify(players));
-loadAdmin();
+loadPlayers();
 }
 
+// REJECT
 function reject(i){
 let players=JSON.parse(localStorage.getItem("players"));
 players[i].status="Rejected";
 localStorage.setItem("players",JSON.stringify(players));
-loadAdmin();
+loadPlayers();
 }
-
-function addKill(i){
-let players=JSON.parse(localStorage.getItem("players"));
-players[i].kills+=1;
-localStorage.setItem("players",JSON.stringify(players));
-loadAdmin();
-}
-
-function declareWinner(i){
-let players=JSON.parse(localStorage.getItem("players"));
-alert("Winner: "+players[i].name+" Prize ₹"+winnerPrize);
-}
-
-function leaderboard(){
-
-let players=JSON.parse(localStorage.getItem("players"))||[];
-
-players.sort((a,b)=>b.kills-a.kills);
-
-let html="<h2>Leaderboard</h2>";
-
-players.forEach(p=>{
-html+=`
-<div class="leader">
-${p.name} — ${p.kills} kills
-</div>
-`;
-});
-
-document.getElementById("main").innerHTML=html;
-}
-
-function updateCount(){
-let players=JSON.parse(localStorage.getItem("players"))||[];
-document.getElementById("count").innerText=players.length;
-}
-
-setInterval(updateCount,1000);
-
-function timer(){
-
-let end=new Date().getTime()+3600000;
-
-setInterval(()=>{
-let now=new Date().getTime();
-let left=end-now;
-let m=Math.floor(left/60000);
-let s=Math.floor((left%60000)/1000);
-document.getElementById("timer").innerText="Next match in "+m+"m "+s+"s";
-},1000);
-}
-
-timer();
 
 </script>
 
