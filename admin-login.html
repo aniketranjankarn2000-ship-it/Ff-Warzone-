@@ -12,31 +12,44 @@ body{
   justify-content:center;
   align-items:center;
   height:100vh;
+  margin:0;
 }
 
 .login-box{
   background:#111;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 0 20px red;
-  width:300px;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 0 25px red;
+  width:320px;
   text-align:center;
+}
+
+h2{
+  margin-bottom:15px;
 }
 
 input{
   width:100%;
-  padding:10px;
+  padding:12px;
   margin:10px 0;
+  border:none;
+  border-radius:6px;
+  outline:none;
 }
 
 button{
   width:100%;
-  padding:10px;
+  padding:12px;
   background:#22c55e;
   border:none;
   color:white;
   font-weight:bold;
   border-radius:6px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#16a34a;
 }
 </style>
 </head>
@@ -44,18 +57,18 @@ button{
 <body>
 
 <div class="login-box">
-<h2>Admin Login</h2>
+  <h2>Admin Login</h2>
 
-<input type="text" id="adminId" placeholder="Enter Admin ID">
-<input type="password" id="adminPass" placeholder="Enter Password">
+  <input type="text" id="adminId" placeholder="Enter Admin ID">
+  <input type="password" id="adminPass" placeholder="Enter Password">
 
-<button onclick="login()">Login</button>
+  <button onclick="login()">Login</button>
 </div>
 
 <script>
 function login(){
-  var id = document.getElementById("adminId").value;
-  var pass = document.getElementById("adminPass").value;
+  var id = document.getElementById("adminId").value.trim();
+  var pass = document.getElementById("adminPass").value.trim();
 
   if(id === "admin567" && pass === "admin123"){
     alert("Login Successful");
