@@ -1,71 +1,254 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FF WARZONE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial;
-      background: #020617;
-      color: white;
-      padding: 15px;
-    }
-    .card {
-      background: #1e293b;
-      padding: 15px;
-      border-radius: 12px;
-      margin-top: 20px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: red;
-      border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 8px;
-      margin-top: 10px;
-    }
-  </style>
+<title>FF WARZONE</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+margin:0;
+background:linear-gradient(180deg,#000,#0b0b0b);
+font-family:Arial;
+color:white;
+text-align:center;
+}
+
+.logo{
+font-size:40px;
+color:#ff003c;
+text-shadow:0 0 25px red;
+margin-top:20px;
+}
+
+.container{
+padding:20px;
+}
+
+button{
+padding:14px 25px;
+font-size:16px;
+background:#ff003c;
+border:none;
+color:white;
+border-radius:10px;
+margin:8px;
+}
+
+input{
+display:block;
+margin:10px auto;
+padding:12px;
+width:260px;
+border:none;
+border-radius:8px;
+}
+
+.card{
+background:#111;
+padding:15px;
+margin:15px;
+border-radius:12px;
+}
+
+.upi{
+background:#222;
+padding:10px;
+border-radius:8px;
+}
+
+.leader{
+background:#0f0f0f;
+padding:10px;
+margin:10px;
+border-radius:10px;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<h2>🔥 FF WARZONE Tournaments</h2>
+<h1 class="logo">FF WARZONE</h1>
 
-<div id="tournamentBox"></div>
+<h3 id="timer"></h3>
+<h3>Total Players: <span id="count">0</span></h3>
+
+<button onclick="showPlayer()">PLAYER PANEL</button>
+<button onclick="showAdmin()">ADMIN PANEL</button>
+<button onclick="leaderboard()">LEADERBOARD</button>
+
+<div id="main" class="container"></div>
 
 <script>
 
-let data = JSON.parse(localStorage.getItem("tournament"));
+let upi="aniket8764@ptaxis";
+let entryFee=20;
+let perKill=0.5;
+let winnerPrize=100;
 
-if(data){
+function showPlayer(){
+document.getElementById("main").innerHTML=`
 
-document.getElementById("tournamentBox").innerHTML = `
 <div class="card">
+<h2>Join Tournament</h2>
 
-<h3>${data.name}</h3>
+<input id="name" placeholder="Player Name">
+<input id="uid" placeholder="Free Fire UID">
 
-Entry Fee: ${data.entry} <br>
-Winner Prize: ${data.prize} <br>
-Date: ${data.date} <br>
-Time: ${data.time} <br><br>
+<p>Entry Fee: ₹${entryFee}</p>
+<p>Per Kill: ₹${perKill}</p>
+<p>Winner Prize: ₹${winnerPrize}</p>
 
-<a href="join.html">
-<button>Join Tournament</button>
-</a>
+<p class="upi">UPI: ${upi}</p>
+
+<input id="txn" placeholder="Transaction ID">
+<input type="file" id="shot">
+
+<button onclick="join()">SUBMIT</button>
 
 </div>
+
 `;
 }
 
-else{
-document.getElementById("tournamentBox").innerHTML="No tournament live";
+function join(){
+
+let name=document.getElementById("name").value;
+let uid=document.getElementById("uid").value;
+let txn=document.getElementById("txn").value;
+
+if(name==""||uid==""||txn==""){
+alert("Fill all details");
+return;
 }
 
-function join(){
-alert("Contact admin & pay entry fee to join");
+let players=JSON.parse(localStorage.getItem("players"))||[];
+
+players.push({
+name:name,
+uid:uid,
+txn:txn,
+kills:0,
+status:"Pending",
+room:"Not Assigned"
+});
+
+localStorage.setItem("players",JSON.stringify(players));
+
+alert("Joined Successfully! Wait for Admin Approval");
+updateCount();
 }
+
+function showAdmin(){
+
+let pass=prompt("Enter Admin Password");
+
+if(pass!="admin123"){
+alert("Wrong Password");
+return;
+}
+
+loadAdmin();
+}
+
+function loadAdmin(){
+
+let players=JSON.parse(localStorage.getItem("players"))||[];
+
+let html="<h2>Admin Panel</h2>";
+
+players.forEach((p,i)=>{
+
+html+=`
+<div class="card">
+${p.name} | UID: ${p.uid}<br>
+TXN: ${p.txn}<br>
+Kills: ${p.kills}<br>
+Status: ${p.status}<br>
+Room: ${p.room}<br><br>
+
+<button onclick="approve(${i})">Approve</button>
+<button onclick="reject(${i})">Reject</button>
+<button onclick="addKill(${i})">Add Kill</button>
+<button onclick="declareWinner(${i})">Winner</button>
+</div>
+`;
+});
+
+document.getElementById("main").innerHTML=html;
+}
+
+function approve(i){
+let players=JSON.parse(localStorage.getItem("players"));
+let room="ROOM"+Math.floor(Math.random()*9999);
+players[i].status="Approved";
+players[i].room=room;
+localStorage.setItem("players",JSON.stringify(players));
+loadAdmin();
+}
+
+function reject(i){
+let players=JSON.parse(localStorage.getItem("players"));
+players[i].status="Rejected";
+localStorage.setItem("players",JSON.stringify(players));
+loadAdmin();
+}
+
+function addKill(i){
+let players=JSON.parse(localStorage.getItem("players"));
+players[i].kills+=1;
+localStorage.setItem("players",JSON.stringify(players));
+loadAdmin();
+}
+
+function declareWinner(i){
+let players=JSON.parse(localStorage.getItem("players"));
+alert("Winner: "+players[i].name+" Prize ₹"+winnerPrize);
+}
+
+function leaderboard(){
+
+let players=JSON.parse(localStorage.getItem("players"))||[];
+
+players.sort((a,b)=>b.kills-a.kills);
+
+let html="<h2>Leaderboard</h2>";
+
+players.forEach(p=>{
+html+=`
+<div class="leader">
+${p.name} — ${p.kills} kills
+</div>
+`;
+});
+
+document.getElementById("main").innerHTML=html;
+}
+
+function updateCount(){
+let players=JSON.parse(localStorage.getItem("players"))||[];
+document.getElementById("count").innerText=players.length;
+}
+
+setInterval(updateCount,1000);
+
+function timer(){
+
+let end=new Date().getTime()+3600000;
+
+setInterval(()=>{
+let now=new Date().getTime();
+let left=end-now;
+let m=Math.floor(left/60000);
+let s=Math.floor((left%60000)/1000);
+document.getElementById("timer").innerText="Next match in "+m+"m "+s+"s";
+},1000);
+}
+
+timer();
 
 </script>
 
