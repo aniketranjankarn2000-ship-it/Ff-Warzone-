@@ -1,0 +1,47 @@
+body{
+ margin:0;
+ background:black;
+ font-family:Arial;
+ color:white;
+ text-align:center;
+}
+
+.container{
+ padding:20px;
+}
+
+.logo{
+ font-size:40px;
+ color:#ff003c;
+ text-shadow:0 0 20px red;
+}
+
+.tag{
+ color:#ccc;
+ margin-bottom:30px;
+}
+
+.join-btn{
+ padding:15px 30px;
+ font-size:18px;
+ background:#ff003c;
+ border:none;
+ color:white;
+ border-radius:10px;
+ margin-top:20px;
+}
+
+input{
+ display:block;
+ margin:12px auto;
+ padding:12px;
+ width:260px;
+ border:none;
+ border-radius:8px;
+}
+
+.upi{
+ background:#111;
+ padding:10px;
+ border-radius:8px;
+}
