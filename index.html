@@ -1,37 +1,221 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>FF WARZONE</title>
+<title>FF WARZONE TOURNAMENT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
-  background:black;
-  color:white;
+  margin:0;
   font-family:Arial;
+  background:#020617;
+  color:white;
+}
+
+header{
+  padding:15px;
   text-align:center;
-  padding-top:50px;
+  font-size:22px;
+  font-weight:bold;
+  box-shadow:0 0 20px cyan;
+}
+
+.container{
+  padding:15px;
+}
+
+.card{
+  background:#0f172a;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:10px;
+  box-shadow:0 0 15px cyan;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border:none;
+  border-radius:6px;
 }
 
 button{
-  padding:12px 20px;
-  background:red;
+  width:100%;
+  padding:12px;
   border:none;
-  color:white;
+  border-radius:6px;
   font-weight:bold;
-  border-radius:8px;
+  background:#22c55e;
+  color:white;
+}
+
+.admin{
+  background:#ef4444;
 }
 </style>
 </head>
 
 <body>
 
-<h1>FF WARZONE Tournament</h1>
-<p>Entry Fee: ₹20</p>
-<p>Per Kill: ₹5</p>
+<header>🔥 FF WARZONE TOURNAMENT</header>
 
-<a href="join.html">
-<button>Join Tournament</button>
-</a>
+<div class="container">
+
+<div class="card">
+<h3>Countdown</h3>
+<p id="timer"></p>
+</div>
+
+<div class="card">
+<h3>Player Register</h3>
+<input id="reg_uid" placeholder="Free Fire UID">
+<input id="reg_pass" type="password" placeholder="Password">
+<button onclick="register()">Register</button>
+</div>
+
+<div class="card">
+<h3>Player Login</h3>
+<input id="login_uid" placeholder="UID">
+<input id="login_pass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+
+<div class="card">
+<h3>Admin Login</h3>
+<input id="admin_id" placeholder="Admin ID">
+<input id="admin_pass" type="password" placeholder="Password">
+<button class="admin" onclick="adminLogin()">Admin Login</button>
+</div>
+
+<div class="card">
+<h3>Join Tournament</h3>
+<p>Entry Fee: ₹50</p>
+<p>Per Kill: ₹10</p>
+<p>Winner Prize: ₹500</p>
+<p>UPI: aniket8764@ptaxis</p>
+
+<input type="file" id="payment">
+<button onclick="join()">Upload & Join</button>
+</div>
+
+<div class="card">
+<h3>Leaderboard</h3>
+<ul id="leaderboard"></ul>
+</div>
+
+<div class="card">
+<h3>Admin Panel</h3>
+<ul id="requests"></ul>
+</div>
+
+</div>
+
+<script>
+
+// COUNTDOWN
+var countDate = new Date().getTime() + 86400000;
+setInterval(function(){
+ var now = new Date().getTime();
+ var gap = countDate - now;
+ var h = Math.floor((gap%(1000*60*60*24))/(1000*60*60));
+ var m = Math.floor((gap%(1000*60*60))/(1000*60));
+ var s = Math.floor((gap%(1000*60))/1000);
+ document.getElementById("timer").innerHTML = h+"h "+m+"m "+s+"s";
+},1000);
+
+// REGISTER
+function register(){
+ let uid=document.getElementById("reg_uid").value;
+ let pass=document.getElementById("reg_pass").value;
+ localStorage.setItem(uid,pass);
+ alert("Registered");
+}
+
+// LOGIN
+function login(){
+ let uid=document.getElementById("login_uid").value;
+ let pass=document.getElementById("login_pass").value;
+ let saved=localStorage.getItem(uid);
+
+ if(pass===saved){
+   localStorage.setItem("player",uid);
+   alert("Login success");
+ }else{
+   alert("Wrong login");
+ }
+}
+
+// ADMIN LOGIN
+function adminLogin(){
+ let id=document.getElementById("admin_id").value;
+ let pass=document.getElementById("admin_pass").value;
+
+ if(id==="Admin2009" && pass==="Aniket2009"){
+   localStorage.setItem("admin","yes");
+   alert("Admin Login Success");
+   loadRequests();
+ }
+ else alert("Wrong admin");
+}
+
+// JOIN
+function join(){
+ let player=localStorage.getItem("player");
+ if(!player){ alert("Login first"); return; }
+
+ let req=JSON.parse(localStorage.getItem("requests")||"[]");
+ req.push(player);
+ localStorage.setItem("requests",JSON.stringify(req));
+ alert("Join request sent");
+ loadRequests();
+}
+
+// ADMIN APPROVE
+function loadRequests(){
+ let admin=localStorage.getItem("admin");
+ if(admin!=="yes") return;
+
+ let list=document.getElementById("requests");
+ list.innerHTML="";
+
+ let req=JSON.parse(localStorage.getItem("requests")||"[]");
+
+ req.forEach((p,i)=>{
+  let li=document.createElement("li");
+  li.innerHTML=p+" <button onclick='approve("+i+")'>Approve</button>";
+  list.appendChild(li);
+ });
+}
+
+function approve(i){
+ let req=JSON.parse(localStorage.getItem("requests"));
+ let leaderboard=JSON.parse(localStorage.getItem("leaderboard")||"[]");
+
+ leaderboard.push(req[i]);
+ localStorage.setItem("leaderboard",JSON.stringify(leaderboard));
+
+ req.splice(i,1);
+ localStorage.setItem("requests",JSON.stringify(req));
+
+ loadLeaderboard();
+ loadRequests();
+}
+
+// LEADERBOARD
+function loadLeaderboard(){
+ let lb=document.getElementById("leaderboard");
+ lb.innerHTML="";
+ let data=JSON.parse(localStorage.getItem("leaderboard")||"[]");
+ data.forEach(p=>{
+  let li=document.createElement("li");
+  li.innerText=p;
+  lb.appendChild(li);
+ });
+}
+
+loadLeaderboard();
+</script>
 
 </body>
 </html>
