@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Join Tournament</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+font-family:Arial;
+background:#020617;
+color:white;
+padding:15px;
+}
+.box{
+background:#1e293b;
+padding:15px;
+border-radius:12px;
+}
+input{
+width:100%;
+padding:10px;
+margin-top:8px;
+margin-bottom:12px;
+border-radius:6px;
+border:none;
+}
+button{
+width:100%;
+padding:12px;
+background:red;
+border:none;
+color:white;
+font-size:16px;
+border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Join FF WARZONE Tournament</h2>
+
+<div class="box">
+
+<label>Your Name</label>
+<input type="text" id="name">
+
+<label>Free Fire UID</label>
+<input type="text" id="uid">
+
+<label>Payment Screenshot</label>
+<input type="file" id="payment">
+
+<button onclick="joinNow()">Submit</button>
+
+</div>
+
+<script>
+
+function joinNow(){
+
+let player = {
+name:document.getElementById("name").value,
+uid:document.getElementById("uid").value
+};
+
+localStorage.setItem("player",JSON.stringify(player));
+
+alert("Joined Successfully 🔥 Admin will verify payment");
+
+}
+
+</script>
+
+</body>
+</html>

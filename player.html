@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Join Match</title>
+  <style>
+    body{
+      font-family: Arial;
+      background:#0f172a;
+      color:white;
+      padding:20px;
+    }
+    .box{
+      max-width:400px;
+      margin:auto;
+      background:#1e293b;
+      padding:20px;
+      border-radius:10px;
+    }
+    input,button{
+      width:100%;
+      padding:10px;
+      margin-top:10px;
+      border-radius:6px;
+      border:none;
+    }
+    button{
+      background:#22c55e;
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    h2{ text-align:center; }
+    .info{
+      background:#334155;
+      padding:10px;
+      border-radius:6px;
+      margin-bottom:10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Free Fire Tournament</h2>
+
+<div class="info">
+Entry Fee: ₹20 <br>
+Per Kill: ₹0.5 <br>
+Winner Prize: ₹200 <br><br>
+UPI Payment: <b>aniket8764@ptaxis</b>
+</div>
+
+<input type="text" id="name" placeholder="Player Name">
+<input type="text" id="uid" placeholder="Game UID">
+<input type="file" id="payment">
+
+<button onclick="joinMatch()">Join Match</button>
+
+</div>
+
+<script>
+
+function joinMatch(){
+
+let name = document.getElementById("name").value;
+let uid = document.getElementById("uid").value;
+
+if(name=="" || uid==""){
+alert("Fill all details");
+return;
+}
+
+let players = JSON.parse(localStorage.getItem("players") || "[]");
+
+players.push({
+name:name,
+uid:uid,
+status:"Pending"
+});
+
+localStorage.setItem("players",JSON.stringify(players));
+
+alert("Joined! Wait for admin approval");
+
+}
+
+</script>
+
+</body>
+</html>

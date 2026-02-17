@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <style>
+    body{
+      font-family: Arial;
+      background:#020617;
+      color:white;
+      padding:20px;
+    }
+    table{
+      width:100%;
+      background:#1e293b;
+      border-collapse:collapse;
+    }
+    th,td{
+      padding:10px;
+      border:1px solid #334155;
+      text-align:center;
+    }
+    button{
+      padding:6px 10px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      color:white;
+    }
+    .approve{ background:#22c55e; }
+    .reject{ background:#ef4444; }
+    h2{ text-align:center; }
+  </style>
+</head>
+
+<body>
+
+<h2>Admin Panel</h2>
+
+<table>
+<tr>
+<th>Name</th>
+<th>UID</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tbody id="playerTable"></tbody>
+
+</table>
+
+<script>
+
+function loadPlayers(){
+
+let players = JSON.parse(localStorage.getItem("players") || "[]");
+
+let html="";
+
+players.forEach((p,i)=>{
+
+html+=`
+<tr>
+<td>${p.name}</td>
+<td>${p.uid}</td>
+<td>${p.status}</td>
+<td>
+<button class="approve" onclick="approve(${i})">Approve</button>
+<button class="reject" onclick="reject(${i})">Reject</button>
+</td>
+</tr>
+`;
+
+});
+
+document.getElementById("playerTable").innerHTML=html;
+
+}
+
+function approve(i){
+
+let players = JSON.parse(localStorage.getItem("players"));
+players[i].status="Approved";
+localStorage.setItem("players",JSON.stringify(players));
+loadPlayers();
+
+}
+
+function reject(i){
+
+let players = JSON.parse(localStorage.getItem("players"));
+players[i].status="Rejected";
+localStorage.setItem("players",JSON.stringify(players));
+loadPlayers();
+
+}
+
+loadPlayers();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FF WARZONE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial;
+      background: #020617;
+      color: white;
+      padding: 15px;
+    }
+    .card {
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: red;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>🔥 FF WARZONE Tournaments</h2>
+
+<div id="tournamentBox"></div>
+
+<script>
+
+let data = JSON.parse(localStorage.getItem("tournament"));
+
+if(data){
+
+document.getElementById("tournamentBox").innerHTML = `
+<div class="card">
+
+<h3>${data.name}</h3>
+
+Entry Fee: ${data.entry} <br>
+Winner Prize: ${data.prize} <br>
+Date: ${data.date} <br>
+Time: ${data.time} <br><br>
+
+<a href="join.html">
+<button>Join Tournament</button>
+</a>
+
+</div>
+`;
+}
+
+else{
+document.getElementById("tournamentBox").innerHTML="No tournament live";
+}
+
+function join(){
+alert("Contact admin & pay entry fee to join");
+}
+
+</script>
+
+</body>
+</html>
